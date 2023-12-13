@@ -48,7 +48,7 @@ def hill_climbing_knapsack(weights, profits, capacity, iterations=100):
 def initialize_population(pop_size, n):
     return [[random.randint(0, 1) for _ in range(n)] for _ in range(pop_size)]
 
-def fitness(solution, weights, profits, capacity):
+def Fitness(solution, weights, profits, capacity):
     total_weight = sum(w * s for w, s in zip(weights, solution))
     total_profit = sum(p * s for p, s in zip(profits, solution))
     if total_weight > capacity:
@@ -56,7 +56,7 @@ def fitness(solution, weights, profits, capacity):
     else:
         return total_profit
 
-def select_parents(population, fitnesses, num_parents):
+def Selection(population, fitnesses, num_parents):
     parents = []
     for _ in range(num_parents):
         max_fitness_idx = fitnesses.index(max(fitnesses))
@@ -64,7 +64,7 @@ def select_parents(population, fitnesses, num_parents):
         fitnesses[max_fitness_idx] = -99999999  # Mark as used
     return parents
 
-def crossover(parents, offspring_size):
+def Crossover(parents, offspring_size):
     offspring = []
     crossover_point = offspring_size[1] // 2
     for k in range(offspring_size[0]):
@@ -73,7 +73,7 @@ def crossover(parents, offspring_size):
         offspring.append(parents[parent1_idx][:crossover_point] + parents[parent2_idx][crossover_point:])
     return offspring
 
-def mutation(offspring_crossover):
+def Mutation(offspring_crossover):
     for child in offspring_crossover:
         mutation_idx = random.randint(0, len(child) - 1)
         child[mutation_idx] = 1 - child[mutation_idx]
@@ -84,12 +84,12 @@ def genetic_algorithm(weights, profits, capacity, pop_size, num_generations, num
     profit_history = []
 
     for generation in range(num_generations):
-        fitnesses = [fitness(individual, weights, profits, capacity) for individual in population]
+        fitnesses = [Fitness(individual, weights, profits, capacity) for individual in population]
         profit_history.append(max(fitnesses))
 
-        parents = select_parents(population, fitnesses[:], num_parents_mating)  # Use a copy of the fitnesses list
-        offspring_crossover = crossover(parents, (pop_size[0] - len(parents), pop_size[1]))
-        offspring_mutation = mutation(offspring_crossover)
+        parents = Selection(population, fitnesses[:], num_parents_mating)  # Use a copy of the fitnesses list
+        offspring_crossover = Crossover(parents, (pop_size[0] - len(parents), pop_size[1]))
+        offspring_mutation = Mutation(offspring_crossover)
         population = parents + offspring_mutation
 
     return profit_history
